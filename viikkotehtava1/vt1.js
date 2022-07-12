@@ -16,8 +16,15 @@
 */
 function jarjestaLeimaustavat(data) {
   console.log(data);
-  return data.leimaustavat; // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
+
+  const leimaustavat = JSON.parse(JSON.stringify(data.leimaustavat)); // Kpioidaan taulukko tietorakenteesta
+  leimaustavat.sort(); // Järjestetään taulukko aakkosjärejstykseen.
+
+  return leimaustavat; // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
 }
+
+
+
 
 /**
   * Taso 1
@@ -28,9 +35,17 @@ function jarjestaLeimaustavat(data) {
   * @return {Array} palauttaa järjestetyn _kopion_ data.sarjat-taulukosta
   */
 function jarjestaSarjat(data) {
-  return data.sarjat;  // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
+
+  const sarjat = JSON.parse(JSON.stringify(data.sarjat)); // Kpioidaan taulukko tietorakenteesta
+  sarjat.sort(compareNumbers); // Järjestetään taulukko aakkosjärejstykseen.
+
+  return sarjat;  // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
 }
 
+
+function compareNumbers(a, b) { //numeroiden vertailu
+  return a - b;
+}
 
 /**
   * Taso 1
