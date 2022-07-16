@@ -1,6 +1,5 @@
 #vt1 div {
     display: inline-table;
-    justify-content: space-between; /*turha kait*/
     margin-right: 1em;
     vertical-align: top;
 }
