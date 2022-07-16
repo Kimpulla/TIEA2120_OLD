@@ -1,0 +1,40 @@
+#vt1 div {
+    display: inline-table;
+    justify-content: space-between; /*turha kait*/
+    margin-right: 1em;
+    vertical-align: top;
+}
+
+div > div > div > div {
+    border: 3px solid black;
+}
+
+input, label {
+    display: flex;
+}
+
+fieldset {
+    border: none;
+}
+
+h2, h3 {
+    margin-left: 1em;
+}
+
+table {
+    margin: 1em;
+}
+
+table, th, td {
+    border-collapse: collapse;
+    border: 1px solid grey;
+    vertical-align: top;
+}
+
+td > ul {
+    margin-left: -1.5em;
+    margin-top: -1%;
+    margin-bottom: -1%;
+    vertical-align: top;
+}
+
