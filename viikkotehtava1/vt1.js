@@ -20,10 +20,8 @@ function jarjestaLeimaustavat(data) {
   const leimaustavat = JSON.parse(JSON.stringify(data.leimaustavat)); // Kpioidaan taulukko tietorakenteesta
   leimaustavat.sort(); // Järjestetään taulukko aakkosjärejstykseen.
 
-  return leimaustavat; // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
+  return leimaustavat; 
 }
-
-
 
 
 /**
@@ -35,17 +33,22 @@ function jarjestaLeimaustavat(data) {
   * @return {Array} palauttaa järjestetyn _kopion_ data.sarjat-taulukosta
   */
 function jarjestaSarjat(data) {
-
+ 
   const sarjat = JSON.parse(JSON.stringify(data.sarjat)); // Kpioidaan taulukko tietorakenteesta
-  sarjat.sort(compareNumbers); // Järjestetään taulukko aakkosjärejstykseen.
-
-  return sarjat;  // tässä pitää palauttaa järjestetty kopio eikä alkuperäistä
+  sarjat.sort(compare);
+  return sarjat;
 }
 
-
-function compareNumbers(a, b) { //numeroiden vertailu
-  return a - b;
+function compare(a, b) {
+  if (a.nimi < b.nimi) {
+    return -1;
+  }
+  if (a.nimi > b.nimi) {
+    return 1;
+  }
+  return 0;
 }
+
 
 /**
   * Taso 1
@@ -71,8 +74,39 @@ function compareNumbers(a, b) { //numeroiden vertailu
   * @return {Object} palauttaa muutetun alkuperäisen data-tietorakenteen
   */
 function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
+
+      if(!data.sarjat.some(sarja => sarja.nimi === nimi) && kesto > 0 && whitespaceCheck(nimi) == false){
+
+        let obj = {"nimi": nimi, "kesto": parseInt(kesto), "id": generateId(1000000), "alkuaika": alkuaika, "loppuaika": loppuaika};
+        data.sarjat.push(obj);
+      }
+      else {
+        console.log("Error");
+      }
   return data;
 }
+
+
+/**
+ * Luo uuden satunnaisen Id:n käyttäen apuna {@link Math} rajapintaa.
+ * 
+ * @param {*} max - maksimi palautettava numero.
+ * @returns {Integer} - palauttaa satunnaisen numeron.
+ */
+function generateId(max) {
+  return Math.floor(Math.random() * max) + 1;
+}
+
+/**
+ * Tarkastaa onko merkkijono tyhjä. Käyttää apuna {@link String.trim} metodia.
+ *  
+ * @param {*} str - tarkastettava merkkijono.
+ * @returns - palauttaa true, jos merkkijono on sisällöltään tyhjä.
+ */
+function whitespaceCheck(str) {
+  return str.trim().length === 0;
+}
+
 
 /**
   * Taso 1
@@ -82,8 +116,15 @@ function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
   * @return {Object} palauttaa muuttuneen alkuperäisen datan
   */
 function poistaJoukkue(data, id) {
+ 
+  for (let joukkue of data.joukkueet){
+    if (joukkue.id === id){
+      data.joukkueet.splice(joukkue, 1);
+    }
+  }
   return data;
 }
+
 
 /**
   * Taso 3
@@ -95,6 +136,7 @@ function poistaJoukkue(data, id) {
   * @return {Array} palauttaa järjestetyn _kopion_ data.rastit-taulukosta
   */
 function jarjestaRastit(data) {
+  
   return data.rastit;
 }
 
@@ -249,4 +291,3 @@ function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
 function deg2rad(deg) {
   return deg * (Math.PI/180);
 }
-
