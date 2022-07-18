@@ -75,9 +75,15 @@ function compare(a, b) {
   */
 function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
 
-      if(!data.sarjat.some(sarja => sarja.nimi === nimi) && kesto > 0 && whitespaceCheck(nimi) == false){
+      if(!data.sarjat.some(sarja => sarja.nimi === nimi) &&
+       kesto > 0 && whitespaceCheck(nimi) == false){
 
-        let obj = {"nimi": nimi, "kesto": parseInt(kesto), "id": generateId(1000000), "alkuaika": alkuaika, "loppuaika": loppuaika};
+        let obj = {"nimi": nimi,
+        "kesto": parseInt(kesto),
+        "id": generateId(1000000),
+        "alkuaika": alkuaika, 
+        "loppuaika": loppuaika};
+
         data.sarjat.push(obj);
       }
       else {
@@ -136,8 +142,26 @@ function poistaJoukkue(data, id) {
   * @return {Array} palauttaa järjestetyn _kopion_ data.rastit-taulukosta
   */
 function jarjestaRastit(data) {
+
+  const rasti = JSON.parse(JSON.stringify(data.rastit)); // Kopioidaan taulukko tietorakenteesta.
+
   
-  return data.rastit;
+  
+  rasti.sort((a, b) => {
+
+    let first = a.koodi.toLowerCase(); // Muutetaan merkkijonot pieniksi kirjaimiksi.
+    let second = b.koodi.toLowerCase();
+
+    if (first < second) { // Vertaillaan.
+        return -1;
+    }
+    if (first > second) {
+        return 1;
+    }
+    return 0;
+    
+});
+  return rasti;  // kirjaimella alkavat vielä lopussa??
 }
 
 
@@ -159,7 +183,9 @@ function jarjestaRastit(data) {
   *     "id": {Number}, // jokaisella joukkueella oleva uniikki kokonaislukutunniste
   *     "nimi": {String}, // Joukkueen uniikki nimi
   *     "jasenet": {Array}, // taulukko joukkueen jäsenien nimistä
+  * 
   *     "leimaustapa": {Array}, // taulukko joukkueen leimaustapojen indekseistä (data.leimaustavat)
+  * 
   *     "rastileimaukset": {Array}, // taulukko joukkueen rastileimauksista. Oletuksena tyhjä eli []
   *     "sarja": {Object}, // viite joukkueen sarjaan, joka löytyy data.sarjat-taulukosta
   *     "pisteet": {Number}, // joukkueen pistemäärä, oletuksena 0
@@ -173,9 +199,53 @@ function jarjestaRastit(data) {
   * @param {Array} jasenet - joukkueen jäsenet
   * @return {Object} palauttaa muutetun alkuperäisen data-tietorakenteen
   */
-function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
+ function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
+ 
+  if(!data.joukkueet.some(joukkue => joukkue.nimi === nimi) && whitespaceCheck(nimi) == false &&
+  leimaustavat.length >= 1 && jasenet.length >= 2  && hasDuplicates(jasenet) == false &&
+  findId(data.sarjat,sarja) == true){
+
+    console.log("inludes:"+ findId(data.sarjat,sarja) );
+    console.log("duplicates has:"+ hasDuplicates(jasenet));
+try{
+  
+    let newTeam = {"nimi": nimi, "pisteet": 0, "matka": 0, "id": generateId(100000), "jasenet": jasenet,
+     "leimaustapa": leimaustavat, "rastileimaukset": [], "sarja": palautaSarja(data.sarjat, sarja), "aika": "00:00:00" }; //sarja
+    data.joukkueet.push(newTeam);
+}
+catch (error){
+  console.log("jokin meni vikaan:" + error.message);
+}
+
   return data;
 }
+  console.log("Problem occured");
+  return data;
+}
+
+function palautaSarja(arr, input){
+
+let index;
+
+if (findId(arr, input) == true ){
+index = arr.map(object => object.id).indexOf(parseInt(input));
+}
+return arr[index];
+}
+
+
+
+function findId(arr,input){
+if(arr.some(sarja => sarja.id === parseInt(input))){
+  return true;
+}
+return false;
+}
+
+function hasDuplicates(array) {
+  return (new Set(array)).size !== array.length;
+}
+
 
 /**
   * Taso 3
