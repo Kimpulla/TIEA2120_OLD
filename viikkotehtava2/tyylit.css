@@ -1,0 +1,23 @@
+/* Fonts*/
+
+table legend{
+    font-weight: bold;
+}
+
+
+/*Other*/
+
+fieldset{
+    display: inline-table;
+    width: 15em;
+}
+
+input {
+    float: right; 
+}
+
+input[type="submit"]{
+    float:left;
+    border-style: groove;
+}
+
