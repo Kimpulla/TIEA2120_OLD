@@ -143,26 +143,30 @@ function poistaJoukkue(data, id) {
   */
 function jarjestaRastit(data) {
 
-  const rasti = JSON.parse(JSON.stringify(data.rastit)); // Kopioidaan taulukko tietorakenteesta.
+  let rasti = JSON.parse(JSON.stringify(data.rastit)); // Kopioidaan taulukko tietorakenteesta.
 
-  
-  
-  rasti.sort((a, b) => {
+  rasti.sort(compare1);
 
-    let first = a.koodi.toLowerCase(); // Muutetaan merkkijonot pieniksi kirjaimiksi.
-    let second = b.koodi.toLowerCase();
-
-    if (first < second) { // Vertaillaan.
-        return -1;
-    }
-    if (first > second) {
-        return 1;
-    }
-    return 0;
-    
-});
-  return rasti;  // kirjaimella alkavat vielä lopussa??
+  return rasti;
 }
+
+/**
+ * Apumetodi compare1, järjestää rastit.
+ * 
+ * @param {String} a 
+ * @param {String} b 
+ * @returns  oikean järjestyksen
+ */
+function compare1(a, b) {
+  let tulos = a.koodi.localeCompare(b.koodi, 'fi', {sensitivity: 'base'});
+  // jos sukunimissä oli eroa
+  if ( tulos ) {
+     return tulos;
+  }
+  // jos sukunimet olivat samat palautetaan suoraan etunimien vertailutulos
+  return b.koodi.localeCompare(a.koodi, 'fi', {sensitivity: 'base'});
+}
+
 
 
 /**
@@ -200,17 +204,17 @@ function jarjestaRastit(data) {
   * @return {Object} palauttaa muutetun alkuperäisen data-tietorakenteen
   */
  function lisaaJoukkue(data, nimi, leimaustavat, sarja, jasenet) {
- 
+
   if(!data.joukkueet.some(joukkue => joukkue.nimi === nimi) && whitespaceCheck(nimi) == false &&
   leimaustavat.length >= 1 && jasenet.length >= 2  && hasDuplicates(jasenet) == false &&
   findId(data.sarjat,sarja) == true){
 
-    console.log("inludes:"+ findId(data.sarjat,sarja) );
-    console.log("duplicates has:"+ hasDuplicates(jasenet));
+  //  console.log("inludes:"+ findId(data.sarjat,sarja) );
+  //  console.log("duplicates has:"+ hasDuplicates(jasenet));
 try{
   
     let newTeam = {"nimi": nimi, "pisteet": 0, "matka": 0, "id": generateId(100000), "jasenet": jasenet,
-     "leimaustapa": leimaustavat, "rastileimaukset": [], "sarja": palautaSarja(data.sarjat, sarja), "aika": "00:00:00" }; //sarja
+     "leimaustapa": leimaustavat, "rastileimaukset": [], "sarja": palautaSarja(data.sarjat, sarja), "aika": "00:00:00" };
     data.joukkueet.push(newTeam);
 }
 catch (error){
@@ -219,10 +223,18 @@ catch (error){
 
   return data;
 }
-  console.log("Problem occured");
   return data;
 }
 
+
+/**
+ * Apumetodi, jolla palautetaan haluttu sarja.
+ * 
+ * 
+ * @param {Array} arr 
+ * @param {String} input 
+ * @returns sarjan
+ */
 function palautaSarja(arr, input){
 
 let index;
@@ -234,7 +246,13 @@ return arr[index];
 }
 
 
-
+/**
+ * Apumetodi, jolla selvitetään onko id data.sarjat taulukossa.
+ * 
+ * @param {Array} arr 
+ * @param {String} input 
+ * @returns true, jos input löytyy taulukosta.
+ */
 function findId(arr,input){
 if(arr.some(sarja => sarja.id === parseInt(input))){
   return true;
@@ -242,6 +260,12 @@ if(arr.some(sarja => sarja.id === parseInt(input))){
 return false;
 }
 
+/**
+ * Apumetodi, joka tarkastaa onka taulukossa duplikaatteja.
+ * 
+ * @param {Array} array 
+ * @returns false, jos duplikaatteja ei ole.
+ */
 function hasDuplicates(array) {
   return (new Set(array)).size !== array.length;
 }
@@ -258,8 +282,54 @@ function hasDuplicates(array) {
   * @return {Object} joukkue
   */
 function laskeAika(joukkue) {
+
+  
+  let firstTime, afterTime, startTime, endTime, tulos;
+
+  for(let obj of joukkue.rastileimaukset) {
+    if(obj.rasti != null) {
+      if(obj.rasti.koodi == "LAHTO") {
+        firstTime =  obj.aika;
+        startTime = firstTime.substring(firstTime.indexOf(' ') + 1);
+        
+      }
+    if(obj.rasti != null) {
+      if(obj.rasti.koodi == "MAALI"){
+        afterTime = obj.aika;
+        endTime = afterTime.substring(afterTime.indexOf(' ') + 1);
+          
+      }
+    }
+
+    }
+  }
+
+try{
+        //katkaistaan ":" kohdalta
+        let beginning = startTime.split(":");
+
+        //muutetaan sekunneiksi
+        let seconds = (+beginning[0]) * 3600 + (+beginning[1]) * 60 + (+beginning[2]); 
+
+        //katkaistaan ":" kohdalta
+        let ending = endTime.split(":");
+
+        //muutetaan sekunneiksi
+        let seconds2 = (+ending[0]) * 3600 + (+ending[1]) * 60 + (+ending[2]); 
+       
+        let date = new Date(2017,3,18);
+            date.setSeconds(seconds2 - seconds);
+
+        //otetaan vain kaksi merkitsevää lukua.
+        tulos = date.toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1"); 
+
+        joukkue.aika = tulos;
+
+} catch(error){}
+  
   return joukkue;
 }
+
 
 /**
   * Taso 3 ja Taso 5
