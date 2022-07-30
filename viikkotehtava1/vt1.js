@@ -96,8 +96,8 @@ function lisaaSarja(data, nimi, kesto, alkuaika, loppuaika) {
 /**
  * Luo uuden satunnaisen Id:n käyttäen apuna {@link Math} rajapintaa.
  * 
- * @param {*} max - maksimi palautettava numero.
- * @returns {Integer} - palauttaa satunnaisen numeron.
+ * @param {Number} max - maksimi palautettava numero.
+ * @returns {Number} - palauttaa satunnaisen numeron.
  */
 function generateId(max) {
   return Math.floor(Math.random() * max) + 1;
@@ -106,7 +106,7 @@ function generateId(max) {
 /**
  * Tarkastaa onko merkkijono tyhjä. Käyttää apuna {@link String.trim} metodia.
  *  
- * @param {*} str - tarkastettava merkkijono.
+ * @param {String} str - tarkastettava merkkijono.
  * @returns - palauttaa true, jos merkkijono on sisällöltään tyhjä.
  */
 function whitespaceCheck(str) {
@@ -144,11 +144,12 @@ function poistaJoukkue(data, id) {
 function jarjestaRastit(data) {
 
   let rasti = JSON.parse(JSON.stringify(data.rastit)); // Kopioidaan taulukko tietorakenteesta.
-
+ 
   rasti.sort(compare1);
 
   return rasti;
 }
+
 
 /**
  * Apumetodi compare1, järjestää rastit.
@@ -159,11 +160,11 @@ function jarjestaRastit(data) {
  */
 function compare1(a, b) {
   let tulos = a.koodi.localeCompare(b.koodi, 'fi', {sensitivity: 'base'});
-  // jos sukunimissä oli eroa
+  
   if ( tulos ) {
      return tulos;
   }
-  // jos sukunimet olivat samat palautetaan suoraan etunimien vertailutulos
+  
   return b.koodi.localeCompare(a.koodi, 'fi', {sensitivity: 'base'});
 }
 
@@ -333,6 +334,7 @@ try{
 
 /**
   * Taso 3 ja Taso 5
+  * 
   *  Järjestää joukkueet järjestykseen haluttujen tietojen perusteella
   *  järjestetään ensisijaisesti kasvavaan aakkosjärjestykseen 
   *  Järjestäminen on tehtävä alkuperäisen taulukon kopiolle. Alkuperäistä ei saa muuttaa tai korvata.
@@ -363,8 +365,14 @@ try{
   * @return {Array} palauttaa järjestetyn ja täydennetyn _kopion_ data.joukkueet-taulukosta
   */
 function jarjestaJoukkueet(data, mainsort="nimi", sortorder=[] ) {
-  return data.joukkueet;
+
+  const teams = JSON.parse(JSON.stringify(data.joukkueet));
+
+     return data.joukkueet;
 }
+
+
+
 
 /**
   * Taso 5

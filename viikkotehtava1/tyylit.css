@@ -1,12 +1,19 @@
 /*
  *  great great style pro
  */
-
 #vt1 div {
     display: inline-table;
     margin-right: 1em;
     vertical-align: top;
 }
+
+
+
+/* - */
+div > div > div > ul > li > div{
+    margin-top: 15px;
+    margin-left: -3em;
+  }
 
 
 
@@ -153,17 +160,12 @@ td > ul {
 
 
 /* Span */
-
 span[title="Siirrä ylöspäin"]{
-    
-    color: blue;
     margin-left: 20em;
-    
+     float: right;
 }
 
 span[title="Siirrä alaspäin"]{
-    
-    color: rgb(255, 0, 0);
-    
+    margin-right: -20em;
+    float: right;
 }
-
